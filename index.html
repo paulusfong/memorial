@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>懷念 秉榕</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a96e;
+      --cream: #fdf6ec;
+      --dark: #1a1611;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--cream);
+      font-family: 'Georgia', '宋體', serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── HERO SLIDESHOW ─── */
+    #hero {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out;
+    }
+    .slide.active { opacity: 1; }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: brightness(0.72);
+    }
+
+    #hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, transparent 40%, rgba(26,22,17,0.7) 100%);
+      pointer-events: none;
+    }
+
+    #hero-name {
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      color: var(--cream);
+      letter-spacing: 0.15em;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+      animation: fadeUp 2s ease forwards;
+    }
+
+    #hero-sub {
+      margin-top: 1rem;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--gold);
+      letter-spacing: 0.3em;
+      opacity: 0;
+      animation: fadeUp 2s ease 0.6s forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #hero-dots { display: none; }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      text-align: center;
+      padding: 3.5rem 1rem 2rem;
+      color: var(--gold);
+      font-size: 1.5rem;
+      letter-spacing: 0.4em;
+    }
+
+    /* ─── GALLERY GRID ─── */
+    #gallery {
+      padding: 0 1.5rem 5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .masonry {
+      columns: 3;
+      column-gap: 12px;
+    }
+    @media (max-width: 900px) { .masonry { columns: 2; } }
+    @media (max-width: 500px) { .masonry { columns: 1; } }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 12px;
+      overflow: hidden;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .masonry-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.4s ease, filter 0.4s ease;
+      filter: brightness(0.9) saturate(0.95);
+    }
+    .masonry-item:hover img {
+      transform: scale(1.03);
+      filter: brightness(1) saturate(1.1);
+    }
+
+    /* ─── LIGHTBOX ─── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+
+    .lb-btn {
+      position: absolute;
+      background: none;
+      border: none;
+      color: var(--cream);
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      font-size: 2rem;
+      line-height: 1;
+      padding: 1rem;
+    }
+    .lb-btn:hover { opacity: 1; }
+    #lb-close { top: 1.5rem; right: 2rem; font-size: 2rem; }
+    #lb-prev  { top: 50%; left: 1rem;  transform: translateY(-50%); font-size: 2.5rem; }
+    #lb-next  { top: 50%; right: 1rem; transform: translateY(-50%); font-size: 2.5rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(253,246,236,0.35);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+    }
+
+    .placeholder-msg {
+      text-align: center;
+      color: rgba(253,246,236,0.4);
+      padding: 4rem 1rem;
+      font-size: 1.1rem;
+      line-height: 2;
+    }
+  </style>
+</head>
+<body>
+
+<section id="hero">
+  <div id="hero-overlay">
+    <div id="hero-name">秉榕</div>
+    <div id="hero-sub">永遠懷念</div>
+  </div>
+  <div id="hero-dots"></div>
+</section>
+
+<div class="divider">✦ &nbsp; 珍貴回憶 &nbsp; ✦</div>
+
+<section id="gallery">
+  <div class="masonry" id="masonry-grid"></div>
+</section>
+
+<div id="lightbox">
+  <button class="lb-btn" id="lb-close" aria-label="Close">✕</button>
+  <button class="lb-btn" id="lb-prev"  aria-label="Previous">‹</button>
+  <img id="lb-img" src="" alt="memorial photo" />
+  <button class="lb-btn" id="lb-next"  aria-label="Next">›</button>
+</div>
+
+<footer>為你，永遠點亮一盞燈。</footer>
+
+<script>
+  // ─── ADD YOUR PHOTO FILENAMES HERE ────────────────────────────
+  // Place photos in the ./photos/ folder, then list filenames:
+  const PHOTOS = [
+    '0431dc4b1524fa0007063bfaf46f3007.jpg',
+    '20150301_with_Ethan.jpg',
+    '20E301C3E525929CB225BB2830B2F2AB1501BE70.JPG',
+    '3336291fd3b4666560bf78afbbffa9b5.jpg',
+    '710db917f28fb5a47e0ed9c9220960f7.jpg',
+    '7ccc4b70876b4d406a1d0773f5208965.jpeg',
+    'IMG_0451.JPG',
+    'IMG_0665.JPG',
+    'IMG_1031.JPG',
+    'IMG_1074.jpeg',
+    'IMG_1304.jpeg',
+    'IMG_1478.jpeg',
+    'IMG_1541.JPG',
+    'IMG_1542.JPG',
+    'IMG_1543.JPG',
+    'IMG_1547.JPG',
+    'IMG_1548.JPG',
+    'IMG_1549.JPG',
+    'IMG_1550.JPG',
+    'IMG_2603.jpg',
+    'IMG_2824.jpeg',
+    'IMG_5316.jpg',
+    'IMG_5320.jpg',
+    'IMG_5321.jpg',
+    'IMG_5322.jpg',
+    'IMG_5323.jpg',
+    'IMG_5324.jpg',
+    'IMG_5783.JPG',
+    'IMG_5784.JPG',
+    'IMG_5785.JPG',
+    'IMG_7084.jpeg',
+    'IMG_8009.jpg',
+    'IMG_8554.jpg',
+    'IMG_8841.jpeg',
+    'IMG_9048.JPG',
+    'IMG_9050.JPG',
+    'July03_2022.jpg',
+    'May22_2016.jpg',
+    'PXL_20251122_172314278.MP.jpg',
+    'PXL_20251122_172411325.MP.jpg',
+    'ThanksGiving2025.jpg',
+    'With_Elaine_July_2022.jpg',
+    'd9449f22c35f07b8b9ecd299a07834.jpg',
+    'e7598198f17bb93e280ac651f1baca33.jpg',
+    'ed07cf7bdf416e85f5c434aa58291eed.jpg',
+    'fb52577d3f020e0cb4f463867da995.jpg',
+    '方家1.jpg',
+    '方家2.png',
+    '良师益友.jpg',
+    '陆 Aug 2023.jpeg',
+  ];
+
+  const HERO_COUNT  = Infinity;
+  const SLIDE_DELAY = 5000;
+  // ──────────────────────────────────────────────────────────────
+
+  const hero   = document.getElementById('hero');
+  const dotsEl = document.getElementById('hero-dots');
+  const grid   = document.getElementById('masonry-grid');
+
+  function makeImg(filename) {
+    const img = document.createElement('img');
+    img.src     = 'photos/' + filename;
+    img.alt     = '';
+    img.loading = 'lazy';
+    return img;
+  }
+
+  function buildPage() {
+    if (!PHOTOS.length) {
+      const msg = document.createElement('div');
+      msg.className = 'placeholder-msg';
+      msg.textContent = '請將照片放入 photos/ 資料夾，並在 index.html 的 PHOTOS 陣列中填入檔名。';
+      grid.appendChild(msg);
+      return;
+    }
+
+    // Hero slides
+    const heroPhotos = [...PHOTOS]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, Math.min(HERO_COUNT, PHOTOS.length));
+
+    let current = 0;
+
+    heroPhotos.forEach((filename, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide' + (i === 0 ? ' active' : '');
+      slide.appendChild(makeImg(filename));
+      hero.insertBefore(slide, document.getElementById('hero-overlay'));
+
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToSlide(i));
+      dotsEl.appendChild(dot);
+    });
+
+    const slides = hero.querySelectorAll('.slide');
+    const dots   = dotsEl.querySelectorAll('.dot');
+
+    function goToSlide(n) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = n;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    setInterval(() => goToSlide((current + 1) % heroPhotos.length), SLIDE_DELAY);
+
+    // Gallery grid
+    PHOTOS.forEach((filename, idx) => {
+      const item = document.createElement('div');
+      item.className = 'masonry-item';
+      item.appendChild(makeImg(filename));
+      item.addEventListener('click', () => openLightbox(idx));
+      grid.appendChild(item);
+    });
+  }
+
+  // Lightbox
+  let lbIndex = 0;
+  const lb    = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+
+  function openLightbox(idx) {
+    lbIndex = idx;
+    lbImg.src = 'photos/' + PHOTOS[idx];
+    lb.classList.add('open');
+  }
+
+  document.getElementById('lb-close').addEventListener('click', () => lb.classList.remove('open'));
+
+  document.getElementById('lb-prev').addEventListener('click', () => {
+    lbIndex = (lbIndex - 1 + PHOTOS.length) % PHOTOS.length;
+    lbImg.src = 'photos/' + PHOTOS[lbIndex];
+  });
+
+  document.getElementById('lb-next').addEventListener('click', () => {
+    lbIndex = (lbIndex + 1) % PHOTOS.length;
+    lbImg.src = 'photos/' + PHOTOS[lbIndex];
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape')     lb.classList.remove('open');
+    if (e.key === 'ArrowLeft')  document.getElementById('lb-prev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
+  });
+
+  lb.addEventListener('click', e => { if (e.target === lb) lb.classList.remove('open'); });
+
+  buildPage();
+</script>
+</body>
+</html>
