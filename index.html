@@ -4,9 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>懷念 秉榕</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: url('fonts/inter-300.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('fonts/inter-400.woff2') format('woff2');
+    }
+  </style>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,7 +37,7 @@
     body {
       background: var(--bg);
       color: var(--cream);
-      font-family: 'Inter', 'Noto Serif TC', sans-serif;
+      font-family: 'Inter', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
@@ -75,7 +88,7 @@
     }
 
     #hero-name {
-      font-family: 'Noto Serif TC', serif;
+      font-family: 'Inter', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', serif;
       font-weight: 300;
       font-size: clamp(3rem, 9vw, 6.5rem);
       color: var(--cream);
@@ -147,7 +160,7 @@
       background: var(--border);
     }
     .section-header h2 {
-      font-family: 'Noto Serif TC', serif;
+      font-family: 'Inter', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', serif;
       font-weight: 300;
       font-size: 0.8rem;
       letter-spacing: 0.5em;
